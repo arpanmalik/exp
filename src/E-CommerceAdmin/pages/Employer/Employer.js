@@ -21,7 +21,7 @@ const Employer = () => {
 
   const TotolData = query
     ? data?.filter((i) =>
-        i?.employer?.toLowerCase().includes(query?.toLowerCase())
+        i?.name?.toLowerCase().includes(query?.toLowerCase()) || i?.email?.toLowerCase()?.includes(query?.toLowerCase())
       )
     : data;
 
@@ -68,19 +68,36 @@ const Employer = () => {
     GetAllEmployes();
   }, []);
 
-  const DelteHandler = async (id) => {
-    try {
-      const { data } = await axios.delete(`https://gadi-driver-u8ym.vercel.app/api/v1/admin/${id}`);
-      toast.success(data.message);
-      GetAllEmployes();
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   const [modalShow, setModalShow] = useState(false);
 
   function MyVerticallyCenteredModal(props) {
+
+    const [phone, setPhone] = useState("");
+    const [gender, setGender] = useState("");
+    const [companyType, setType] = useState("");
+    const [name, setName] = useState("");
+    const [details, setDetails] = useState("");
+    const [email, setEmail] = useState("");
+    const [exactAddress, setAddress] = useState("");
+    const [website, setWebsite] = useState("");
+
+    const handleSubmit = async(e)=>{
+      e.preventDefault();
+      const url = "https://gadi-driver-u8ym.vercel.app/api/v1/admin/addEmployee";
+      try{
+        const {data} = await axios.post(url,{
+          phone, gender, companyType, name, details, email, exactAddress, website
+        },{
+          headers:{Authorization : `Bearer ${localStorage.getItem("Token")}`}
+        })
+        console.log(data);
+        GetAllEmployes();
+        props.onHide();
+      }catch(err){
+        console.log(err);
+      }
+    }
 
     return (
       <Modal
@@ -95,12 +112,73 @@ const Employer = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form >
+          <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Category</Form.Label>
+              <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
-                
+                required
+                onChange={(e)=>setName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                required
+                onChange={(e)=>setEmail(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                onChange={(e)=>setPhone(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Gender</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                onChange={(e)=>setGender(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Details</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                onChange={(e)=>setDetails(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Company Type</Form.Label>
+              <Form.Control
+                as="select"
+                required
+                onChange={(e)=>setType(e.target.value)}
+              >
+                <option value="">Select</option>
+                <option value="COMPANY">Company</option>
+                <option value="INDIVISUAL">INDIVIDUAL</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                onChange={(e)=>setAddress(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Website</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                onChange={(e)=>setWebsite(e.target.value)}
               />
             </Form.Group>
             <Button variant="outline-success" type="submit">
@@ -111,11 +189,73 @@ const Employer = () => {
       </Modal>
     );
   }
+
+
+  const [modalShow2, setModalShow2] = useState(false);
+  const [name, setName] = useState("");
+  const [ids, setIde] = useState("");
+
+  function DeleteModal(props) {
+
+    const deleteHandler = async (id) => {
+      try {
+        const { data } = await axios.delete(`https://gadi-driver-u8ym.vercel.app/api/v1/admin/${ids}`);
+        toast.success(data.message);
+        GetAllEmployes();
+        props.onHide();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  
+    return (
+      <Modal
+        {...props}
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Delete 
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="DeleteModal">
+          <div>
+              <img
+                src="https://t4.ftcdn.net/jpg/05/86/31/11/360_F_586311124_4oWWXClxu243Q4987LdHPty2b3EcaTTF.jpg"
+                alt=""
+              />
+            </div>
+            <div>
+              <p>Do You Want to Delete </p>
+            </div>
+          
+
+            <div>
+              <Button variant="outline-danger" onClick={deleteHandler}>
+                Yes
+              </Button>
+              <Button variant="info" onClick={() => props.onHide()}>
+                No
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+
   return (
     <>
           <MyVerticallyCenteredModal
             show={modalShow}
             onHide={() => setModalShow(false)}
+          />
+          <DeleteModal 
+            show={modalShow2} onHide={() => 
+            setModalShow2(false)} 
           />
       <section style={{ padding: "20px" }}>
         <Heading title={"Employer's"} />
@@ -168,7 +308,11 @@ const Employer = () => {
                         </Link>
                         <i
                           className="fa-sharp fa-solid fa-trash"
-                          onClick={() => DelteHandler(i._id)}
+                          onClick={() =>{
+                            setIde(i._id);
+                            setName(i.category);
+                            setModalShow2(true);
+                          }}
                         ></i>
                       </span>
                     </td>

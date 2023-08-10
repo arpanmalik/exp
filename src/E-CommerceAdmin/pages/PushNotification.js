@@ -223,17 +223,63 @@ const PushNotification = () => {
     );
   }
 
-  const deleteHandler = async (id) => {
-    try {
-      const { data } = await axios.delete(
-        `https://gadi-driver-u8ym.vercel.app/api/v1/subscription/${id}`
-      );
-      toast.success(data.message);
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  };
+
+  const [modalShow2, setModalShow2] = useState(false);
+  const [name, setName] = useState("");
+  const [ids, setIde] = useState("");
+
+  function DeleteModal(props) {
+
+    const deleteHandler = async (id) => {
+      try {
+        const { data } = await axios.delete(
+          `https://gadi-driver-u8ym.vercel.app/api/v1/subscription/${ids}`
+        );
+        toast.success(data.message);
+        fetchData();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  
+
+    return (
+      <Modal
+        {...props}
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Delete 
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="DeleteModal">
+          <div>
+              <img
+                src="https://t4.ftcdn.net/jpg/05/86/31/11/360_F_586311124_4oWWXClxu243Q4987LdHPty2b3EcaTTF.jpg"
+                alt=""
+              />
+            </div>
+            <div>
+              <p>Do You Want to Delete </p>
+            </div>
+          
+
+            <div>
+              <Button variant="outline-danger" onClick={() => deleteHandler()}>
+                Yes
+              </Button>
+              <Button variant="info" onClick={() => props.onHide()}>
+                No
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  }
 
   return (
     <>
@@ -241,6 +287,8 @@ const PushNotification = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
+
+  <DeleteModal show={modalShow2} onHide={() => setModalShow2(false)} />
 
       <p className="headP">Dashboard / Subscriptions</p>
 
@@ -320,7 +368,11 @@ const PushNotification = () => {
                       <td>
                         <i
                           className="fa-solid fa-trash"
-                          onClick={() => deleteHandler(i._id)}
+                          onClick={() =>{
+                              setIde(i._id);
+                              setName(i.category);
+                              setModalShow2(true);
+                          }}
                         />
                       </td>
                     </tr>

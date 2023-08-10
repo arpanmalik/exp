@@ -30,9 +30,10 @@ const JobType = () => {
   const [perm, setPerm] = useState({});
 
   const token = localStorage.getItem("Token");
+  const ide = localStorage.getItem("id");
 
   const getPerm = async()=>{
-    const url = `https://gadi-driver-u8ym.vercel.app/api/v1/admin/64b7d10882c930c6453f49bd`;
+    const url = `https://gadi-driver-u8ym.vercel.app/api/v1/admin/${ide}`;
     try{
       const {data} = await axios.get(url,{
         headers:{Authorization : `Bearer ${token}`}
@@ -53,7 +54,7 @@ const JobType = () => {
   const [query, setQuery] = useState("");
 
   const TotolData = query
-    ? data?.filter((i) => i?.plan?.toLowerCase().includes(query?.toLowerCase()))
+    ? data?.filter((i) => i?.jobType?.toLowerCase().includes(query?.toLowerCase()))
     : data;
 
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -156,23 +157,73 @@ const JobType = () => {
     );
   }
 
-  const deleteHandler = async (id) => {
-    try {
-      const { data } = await axios.delete(
-        `https://gadi-driver-u8ym.vercel.app/api/v1/jobType/${id}`
-      );
-      toast.success(data.message);
-      fetchHandler();
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const [modalShow2, setModalShow2] = useState(false);
+  const [name, setName] = useState("");
+  const [ids, setIde] = useState("");
+
+  function DeleteModal(props) {
+
+    const deleteHandler = async (id) => {
+      try {
+        const { data } = await axios.delete(
+          `https://gadi-driver-u8ym.vercel.app/api/v1/jobType/${ids}`
+        );
+        toast.success(data.message);
+        fetchHandler();
+        props.onHide();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  
+  
+    return (
+      <Modal
+        {...props}
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Delete 
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="DeleteModal">
+          <div>
+              <img
+                src="https://t4.ftcdn.net/jpg/05/86/31/11/360_F_586311124_4oWWXClxu243Q4987LdHPty2b3EcaTTF.jpg"
+                alt=""
+              />
+            </div>
+            <div>
+              <p>Do You Want to Delete </p>
+            </div>
+          
+
+            <div>
+              <Button variant="outline-danger" onClick={deleteHandler}>
+                Yes
+              </Button>
+              <Button variant="info" onClick={() => props.onHide()}>
+                No
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  }
 
   return (
     <>
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
+      />
+      <DeleteModal 
+        show={modalShow2} onHide={() => 
+        setModalShow2(false)} 
       />
 
       <section>
@@ -228,8 +279,10 @@ const JobType = () => {
                             <span className="flexCont">
                                { perm?.deleteJobType ? <i
                                   className="fa-sharp fa-solid fa-trash"
-                                  onClick={() => {
-                                    deleteHandler(i._id);
+                                  onClick={() =>{
+                                    setIde(i._id);
+                                    setName(i.category);
+                                    setModalShow2(true);
                                   }}
                                 ></i> : ""}
                                 {perm?.editJobType ? <i

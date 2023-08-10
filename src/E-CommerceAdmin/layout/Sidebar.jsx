@@ -97,13 +97,13 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Category Interest",
     } : "",
 
-    {
-      icon: (
-        <i className="fa-solid fa-cart-shopping text-xl mr-3 rounded-full"></i>
-      ),
-      link: "/Orders",
-      name: "Video",
-    },
+    // {
+    //   icon: (
+    //     <i className="fa-solid fa-cart-shopping text-xl mr-3 rounded-full"></i>
+    //   ),
+    //   link: "/Orders",
+    //   name: "Video",
+    // },
 
     {
       icon: <i className="fa-solid fa-user-tie text-xl mr-3 rounded-full"></i>,
@@ -147,6 +147,11 @@ const Sidebar = ({ hamb, setHamb }) => {
       link: "/job-type",
       name: "Job Type ",
     } : "",
+    {
+      icon: <i className="fa-solid fa-user-tie text-xl mr-3 rounded-full"></i>,
+      link: "/reports",
+      name: "Reports",
+    }
   ];
 
   const logOut = () => {

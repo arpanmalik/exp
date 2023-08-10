@@ -554,3 +554,34 @@ html {
   margin:auto;
   margin-top:30px;
 }
+
+
+.handledelete{
+  margin-left:10%;
+  width:90%;
+}
+
+.handledelete .yes{
+  background:#c44b3f;
+  color:#fff;
+  height:30px;
+  width:30%;
+}
+
+.handledelete .no{
+  margin-top:20px;
+  background:#0cba73;
+  color:#fff;
+  height:30px;
+  width:30%;
+}
+
+/* =========== report styling ===========*/
+
+.srp{
+  width:100%;
+}
+
+.srp1 table{
+  width:100%;
+}

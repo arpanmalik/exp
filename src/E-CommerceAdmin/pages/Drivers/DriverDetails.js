@@ -18,6 +18,7 @@ const DriverDetails = () => {
       );
       setData(data.data);
       setRole(data.data.role);
+      console.log(data?.data);
     } catch (e) {
       console.log(e);
     }

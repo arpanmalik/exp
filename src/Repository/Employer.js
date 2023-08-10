@@ -12,7 +12,9 @@ const Auth = {
 // Employers
 export const GetAllEmployer = async () => {
   try {
-    const response = await axios.get(`${BaseUrl}api/v1/admin/Users`, Auth);
+    const response = await axios.get(`${BaseUrl}api/v1/admin/Users`, {
+      headers:{Authorization : `Bearer ${localStorage.getItem("Token")}`}
+    });
     return response;
   } catch (e) {
     console.log(e);

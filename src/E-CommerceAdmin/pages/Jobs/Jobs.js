@@ -88,7 +88,7 @@ const Jobs = () => {
                 <tr>
                   <th>SNo.</th>
                   <th>Image</th>
-                  <th>Company Type</th>
+                  <th>Company Type / Individual Type</th>
                   <th>Employer Name</th>
                   <th>Job Title</th>
                   <th>Job Type</th>

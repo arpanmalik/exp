@@ -66,22 +66,22 @@ const GetMeThis = () => {
 
   const token = localStorage.getItem("Token");
   const ide = localStorage.getItem("id");
-  const getPerm = async()=>{
-    const url = `https://gadi-driver-u8ym.vercel.app/api/v1/admin/${id}`;
-    try{
-      const {data} = await axios.get(url,{
-        headers:{Authorization : `Bearer ${token}`}
-      })
-      console.log(data?.data?.permissions);
+  const getPerm = async () => {
+    const url = `https://gadi-driver-u8ym.vercel.app/api/v1/admin/${ide}`;
+    try {
+      const { data } = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+     // console.log("32rffg", data?.data);
       setPerm(data?.data?.permissions);
-    }catch(err){
+    } catch (err) {
       console.log(err.message);
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getPerm();
-  },[])
+  }, []);
 
   function MyVerticallyCenteredModal(props) {
     const [category, setCategory] = useState("");
@@ -104,7 +104,6 @@ const GetMeThis = () => {
       }
     };
 
-    
     const EditHandler = async (e) => {
       e.preventDefault();
       try {
@@ -123,7 +122,6 @@ const GetMeThis = () => {
       }
     };
 
-
     return (
       <Modal
         {...props}
@@ -133,7 +131,7 @@ const GetMeThis = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            { edit ? "Edit Existing One" : " Create New" } 
+            {edit ? "Edit Existing One" : " Create New"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -159,17 +157,65 @@ const GetMeThis = () => {
     );
   }
 
-  const deleteHandler = async (id) => {
-    try {
-      const { data } = await axios.delete(
-        `https://gadi-driver-u8ym.vercel.app/api/v1/categoryInterest/${id}`
-      );
-      fetchdata();
-      toast.success(data.message);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+
+
+  const [modalShow2, setModalShow2] = useState(false);
+  const [name, setName] = useState("");
+  const [ids, setIde] = useState("");
+
+  function DeleteModal(props) {
+
+    const deleteHandler = async (id) => {
+      try {
+        const { data } = await axios.delete(
+          `https://gadi-driver-u8ym.vercel.app/api/v1/categoryInterest/${ids}`
+        );
+        fetchdata();
+        toast.success(data.message);
+        props.onHide();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  
+    return (
+      <Modal
+        {...props}
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Delete 
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="DeleteModal">
+          <div>
+              <img
+                src="https://t4.ftcdn.net/jpg/05/86/31/11/360_F_586311124_4oWWXClxu243Q4987LdHPty2b3EcaTTF.jpg"
+                alt=""
+              />
+            </div>
+            <div>
+              <p>Do You Want to Delete </p>
+            </div>
+          
+
+            <div>
+              <Button variant="outline-danger" onClick={() => deleteHandler()}>
+                Yes
+              </Button>
+              <Button variant="info" onClick={() => props.onHide()}>
+                No
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
 
   return (
     <>
@@ -177,7 +223,7 @@ const GetMeThis = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
-
+    <DeleteModal show={modalShow2} onHide={() => setModalShow2(false)} />
       <p className="headP">Dashboard / Category Interest</p>
 
       <div
@@ -190,15 +236,19 @@ const GetMeThis = () => {
         >
           All Category Interest ( Total : {data.length} )
         </span>
-        {perm?.addCategoryInterest ? <button
-          onClick={() => {
-            setEdit(false);
-            setModalShow(true);
-          }}
-          className="md:py-2 px-3 md:px-4 py-1 rounded-sm  bg-[#19376d] text-white tracking-wider"
-        >
-          Create New
-        </button>:""}
+        {perm?.addCategoryInterest ? (
+          <button
+            onClick={() => {
+              setEdit(false);
+              setModalShow(true);
+            }}
+            className="md:py-2 px-3 md:px-4 py-1 rounded-sm  bg-[#19376d] text-white tracking-wider"
+          >
+            Create New
+          </button>
+        ) : (
+          ""
+        )}
       </div>
       <section className="sectionCont">
         <div className="filterBox">
@@ -228,18 +278,30 @@ const GetMeThis = () => {
                   <td>{i.category}</td>
                   <td>
                     <span className="flexCont">
-                     {perm?.deleteCategoryInterest ? <i
-                        className="fa-sharp fa-solid fa-trash"
-                        onClick={() => deleteHandler(i._id)}
-                      ></i> : ""}
-                      { perm?.editCategoryInterest ? <i
-                        className="fa-solid fa-pen-to-square"
-                        onClick={() => {
-                          setEdit(true);
-                          setId(i._id);
-                          setModalShow(true);
+                      {perm?.deleteCategoryInterest ? (
+                        <i
+                          className="fa-sharp fa-solid fa-trash"
+                          onClick={() => {
+                            setIde(i._id);
+                            setName(i.category);
+                            setModalShow2(true);
                         }}
-                      ></i> : ""}
+                        ></i>
+                      ) : (
+                        ""
+                      )}
+                      {perm?.editCategoryInterest ? (
+                        <i
+                          className="fa-solid fa-pen-to-square"
+                          onClick={() => {
+                            setEdit(true);
+                            setId(i._id);
+                            setModalShow(true);
+                          }}
+                        ></i>
+                      ) : (
+                        ""
+                      )}
                     </span>
                   </td>
                 </tr>

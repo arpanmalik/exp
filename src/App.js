@@ -27,6 +27,7 @@ import Employer from "./E-CommerceAdmin/pages/Employer/Employer";
 import Jobs from "./E-CommerceAdmin/pages/Jobs/Jobs";
 import Category from "./E-CommerceAdmin/pages/Category/Category";
 import SubAdmin from "./E-CommerceAdmin/pages/SubAdmin/SubAdmin";
+import Report from "./E-CommerceAdmin/pages/Reports.js";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
         <Route path="/driver/:id" element={<DriverDetails />} />
         <Route path="/job" element={<Jobs />} />
         <Route path="/sub-admin" element={<SubAdmin />} />
+        <Route path="/reports" element={<Report />} />
       </Routes>
     </>
   );

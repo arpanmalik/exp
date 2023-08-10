@@ -15,9 +15,11 @@ const SubAdmin = () => {
   const [edit, setEdit] = useState(false);
   const [id, setId] = useState("");
 
+  console.log(query);
+
   const TotolData = query
     ? data?.filter((i) =>
-        i?.vehicletype?.toLowerCase().includes(query?.toLowerCase())
+        i?.name?.toLowerCase().includes(query?.toLowerCase())
       )
     : data;
 
@@ -86,18 +88,49 @@ const SubAdmin = () => {
     getPerm();
   }, []);
 
-  const deleteHandler = async (id) => {
-    try {
-      const { data } = await axios.delete(
-        `https://gadi-driver-u8ym.vercel.app/api/v1/admin/${id}`,
-        {headers:{Authorization : `Bearer ${token}`}}
-      );
-      toast.success(data.message);
-      fetchData();
-    } catch (e) {
-      console.log(e);
-    }
-  };
+
+
+  const [dshow, setDshow] = useState(false);
+  const [did, setDid] = useState("");
+
+  function MyVerticallyCenteredModal3(props) {
+   
+    const deleteHandler = async () => {
+      try {
+        console.log("Delete karde");
+        const { data } = await axios.delete(
+          `https://gadi-driver-u8ym.vercel.app/api/v1/admin/${did}`,
+          {headers:{Authorization : `Bearer ${token}`}}
+        );
+        toast.success(data.message);
+        fetchData();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    return (
+      <Modal
+        {...props}
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="handledelete">
+            <p>Are you sure you want </p>
+            <button onClick={deleteHandler} className="yes">Yes</button>
+            <br />
+            <button onClick={props.onHide} className="no">No</button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  }
 
   function MyVerticallyCenteredModal(props) {
     const [vehicletype, setVihcleType] = useState("");
@@ -173,7 +206,7 @@ const SubAdmin = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            {edit ? " Edit  Type" : " Create New Vehicle Type"}
+            {edit ? " Edit  Type" : " Create New Sub Admin"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -486,6 +519,10 @@ const SubAdmin = () => {
         show={modalShow2}
         onHide={() => setModalShow2(false)}
       />
+      <MyVerticallyCenteredModal3
+        show={dshow}
+        onHide={()=>setDshow(false)}
+      />
       <section style={{ padding: "20px" }}>
         <Heading title={"Vehicle Type's"} />
         <div
@@ -550,7 +587,8 @@ const SubAdmin = () => {
                                   <i
                                     className="fa-sharp fa-solid fa-trash"
                                     onClick={() => {
-                                      deleteHandler(i._id);
+                                      setDshow(true);
+                                      setDid(i._id);
                                     }}
                                   ></i>
                                 ) : (
@@ -564,6 +602,7 @@ const SubAdmin = () => {
                                   <i
                                     className="fa-solid fa-pen-to-square"
                                     onClick={() => {
+                                   //  deleteHandler(i._id);
                                       setEdit(true);
                                       setId(i._id);
                                       setModalShow(true);

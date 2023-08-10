@@ -142,6 +142,7 @@ const Notification = () => {
             body,
             date,
             time,
+            image
           },
           {
             headers: {
@@ -201,6 +202,27 @@ const Notification = () => {
       Compoanent = <TemplateComp />;
     }
 
+    const [image, setImage] = useState("");
+
+    const postthumbImage = (e) => {
+      const data = new FormData();
+      data.append("file", e.target.files[0]);
+      data.append("upload_preset", "ml_default");
+      data.append("cloud_name", "dagqqok7o");
+      fetch("https://api.cloudinary.com/v1_1/dagqqok7o/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setImage(data.url);
+          console.log(data.url);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
     return (
       <Modal
         {...props}
@@ -215,6 +237,13 @@ const Notification = () => {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={postHandler}>
+          <Form.Group className="mb-3">
+              <Form.Label>Upload Image</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={(e) => postthumbImage(e)} 
+              />
+            </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Send To</Form.Label>
               <Form.Check
@@ -290,6 +319,9 @@ const Notification = () => {
       </Modal>
     );
   }
+
+
+  
 
   return (
     <>
